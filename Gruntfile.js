@@ -3,6 +3,20 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     concat: {
+      // options: {
+      //   separator: ';',
+      // },
+      dist: {
+        src: ['public/client/app.js',
+              'public/client/createLinkView.js',
+              'public/client/link.js',
+              'public/client/links.js',
+              'public/client/linksView.js',
+              'public/client/linkView.js',
+              'public/client/router.js'],
+
+        dest: 'public/dist/built.js',
+      },
     },
 
     mochaTest: {
@@ -21,11 +35,17 @@ module.exports = function(grunt) {
     },
 
     uglify: {
+      my_target: {
+        files: {
+          'public/dist/output.min.js': ['public/dist/built.js']
+        }
+      }
     },
 
     eslint: {
       target: [
         // Add list of files to lint here
+        'public/dist/built.js'
       ]
     },
 
@@ -35,12 +55,14 @@ module.exports = function(grunt) {
     watch: {
       scripts: {
         files: [
-          'public/client/**/*.js',
+          'public/client/*.js',
           'public/lib/**/*.js',
         ],
         tasks: [
           'concat',
-          'uglify'
+          'uglify',
+          'eslint',
+          'mochaTest'
         ]
       },
       css: {
@@ -66,6 +88,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('server-dev', function (target) {
     grunt.task.run([ 'nodemon', 'watch' ]);
+    // grunt.task.run([ 'watch', 'nodemon' ]);
   });
 
   ////////////////////////////////////////////////////
@@ -87,9 +110,6 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('deploy', [
-    // add your deploy tasks here
-  ]);
-
+  grunt.registerTask('deploy', ['watch']);
 
 };
